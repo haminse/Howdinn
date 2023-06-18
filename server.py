@@ -60,7 +60,9 @@ def signup():
 
 @app.route("/result", methods = ['GET', 'POST']) #change th the only POST later
 def result():
-    return render_template("result.html")
+    #humm code here  : return json file
+    chart_data = gpt4_api.read_json("chart_data(example).json")
+    return render_template("result.html", chart_data = chart_data)
 
 
 

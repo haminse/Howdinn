@@ -3,13 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Warm Concerns!</title>
+    <title>Our Warm Concerns!</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='result.css') }}">
-    <script src="{{ url_for('static', filename='frontend.js') }}"></script>
+
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+      // Load the Visualization API and the corechart package.
+      google.charts.load('current', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+        var chartData = JSON.parse('{{ chart_data|tojson|safe }}'); // Assuming you passed the chart data as a variable named 'chart_data'
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Emotions');
+        data.addColumn('number', 'percentages');
+
+        // Add the data from the Flask server to the data table
+        for (var i = 0; i < chartData.length; i++) {
+            data.addRow([chartData[i].emotion, chartData[i].percentage]);
+            }
+
+        // Set chart options
+        var options = {'title':'',
+                       'width':350,
+                       'height':350};
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
 </head>
 <body>
-    <h1>Houdinn</h1>
+    <h1><img src = "{{ url_for('static', filename='images/logo.png') }}" width = "250px"></h1>
     <h2>Here are our advices!</h2>
-    
+    <div class = 'container'>
+        <div class = 'chart_box' id = 'card'>
+            <h2>Emotion Chart</h2>
+            <span id = "chart_span">
+                <!-- <div class="pie"></div> -->
+                <div id="chart_div"></div>
+            </span>
+        </div>
+        <div class = 'general_advice' id = 'card'>
+            <h2>General Advice</h2>
+            <span>
+                When feeling sadness, it's important to allow yourself to experience and acknowledge your emotions 
+                without judgment. Reach out to a trusted person to talk about your feelings and seek support. Take 
+                care of your physical health by exercising, eating well, getting enough sleep, and practicing relaxation
+                techniques. Engage in activities that bring you joy or a sense of accomplishment. Practice self-care by dedicating
+                 time to activities that nurture your well-being. If your sadness persists or becomes overwhelming, consider seeking 
+                 professional help from a mental health expert who can provide guidance and appropriate 
+                interventions. Remember that everyone's experience with sadness is unique, so find what works best for you and be patient 
+                with yourself as you navigate through it.
+            </span>
+        </div>
+        <div class = 'movie_rec' id = 'card'>
+            <h2>Recommendation For You!</h2>
+            <span>
+                Take a walk in nature - Spending time outdoors and connecting with nature can help uplift your mood.
+                Read a book - Choose a book that interests you and dive into a captivating story or gain knowledge in a subject you enjoy.
+                Practice mindfulness or meditation - Engage in relaxation techniques to help calm your mind and promote a sense of inner peace.
+                Engage in a creative activity - Try painting, writing, or any other creative outlet that allows you to express yourself and channel your emotions.
+            </span>
+        </div>
+    </div>
+    <footer>Team Neural Ninjas</footer>
 </body>
 </html>

@@ -6,15 +6,60 @@ html, body {
 
 body{
     color : #222222;
-    /* background-color: #222222; */
     background-image: url('images/bg_main.jpg');
     font-family: 'Lobster', cursive;
-    /* background-image: linear-gradient(to top, #fdcbf1 0%, #fdcbf1 1%, #e6dee9 100%); */
     background-size: cover;
-    background-repeat: no-repeat;
-    /* background-size: 100% auto; */
+    /* background-repeat: no-repeat; */
 }
 
-/* h1{
-    margin-bottom: 10%;
-} */
+.container {
+    display: flex; 
+    /* border : solid; */
+    /* flex-wrap: wrap; */
+    /* align-content: flex-start;  */
+    /* align-content: stretch; */
+  }
+
+#card {
+    /* text-align: center; */
+    /* width: 400px; */
+    height: 508px;
+    border-radius: 30px;
+    background: white;
+    box-shadow: 20px 20px 60px #bebebe,
+                  -20px -20px 60px #ffffff;
+
+    padding : 1%;
+    margin : 2%;
+    /* opacity: 0.5 */
+   }
+
+#card h2 {
+    margin-left: 5%;
+}
+
+
+#chart_span{
+    display: flex; /* Enable flexbox layout */
+    align-items: center; /* Align items vertically in the center */
+    justify-content: center; 
+}
+
+#chart_div{
+    width : 350px;
+    height: 350px;
+    text-align: center;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 20px 20px 60px #bebebe,
+                  -20px -20px 60px #ffffff;
+
+    padding : 1%;
+    margin : 2%;
+}
+
+
+
+footer {
+    text-align: center;
+}
