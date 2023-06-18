@@ -29,8 +29,12 @@ h1{
                   -20px -20px 60px #ffffff;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: auto;
     padding : 1%;
     /* opacity: 0.5 */
+    justify-content: space-evenly;
+    flex-direction: column;
+    display: flex;
    }
 
 #entry_q{
@@ -69,8 +73,13 @@ h1{
     justify-content: center;
     align-items: center;
 }
+/* 
+#button-id{
+  border: none;
+  padding: 10px 20px;
+} */
 
-button {
+.button-class{
     padding: 12.5px 30px;
     border: 0;
     border-radius: 80px;
@@ -79,15 +88,17 @@ button {
     font-weight: Bold;
     transition: all 0.5s;
     -webkit-transition: all 0.5s;
+    margin: 10% 0 5% 0;
+    cursor: pointer;
   }
   
-  button:hover {
+.button-class:hover {
     background-color: #6fc5ff;
     box-shadow: 0 0 20px #6fc5ff50;
     transform: scale(1.1);
   }
   
-  button:active {
+.button-class:active {
     background-color: #3d94cf;
     transition: all 0.25s;
     -webkit-transition: all 0.25s;

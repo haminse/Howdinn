@@ -10,7 +10,7 @@
 <body>
 
     <h1><img src = "{{ url_for('static', filename='images/logo.png') }}" width = "250px"></h1> 
-    <div id = "account_box"> Vats
+    <div id = "account_box"> {{ email }} 
     </div>
     <div class = "card">
         <h3 id = "entry_q">{{entry}}</h3>
@@ -21,18 +21,24 @@
                 <div class="keyboard"></div>
             </div>
         </div>
+        <div class="buttons">
+            <div id = "button_box">
+                <form class = "button" method="post" action="/start_interaction">
+                    <input class="button-class" type="submit" value="Start Recording" name="Start Recording"/>
+                </form>
+           
+            </div>
+            <div id = "button_box">
+                <form class = "button" method="post" action="/end_interaction">
+    
+                    <input class="button-class" type="submit" value="Stop Recording" name="Stop Recording"/>
+    
+                </form>
+                 
+            </div>
+        </div>
 
-            <form method="post" action="/start_interaction">
-
-                <input type="submit" value="Start Recording" name="Start Recording"/>
-
-            </form>
-            <form method="post" action="/end_interaction">
-
-                <input type="submit" value="Stop Recording" name="Stop Recording"/>
-
-            </form>
-
+       
         </div>
     </div>
 </body>

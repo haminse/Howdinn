@@ -1,0 +1,22 @@
+[
+    {
+      "emotion": "Sadness",
+      "percentage": 35
+    },
+    {
+      "emotion": "Shocked",
+      "percentage": 27
+    },
+    {
+      "emotion": "Madness",
+      "percentage": 7
+    },
+    {
+      "emotion": "Anxious",
+      "percentage": 10
+    },
+    {
+      "emotion": "Salty",
+      "percentage": 5
+    }
+  ]

@@ -17,7 +17,8 @@ from hume import HumeStreamClient, StreamSocket
 from hume.models.config import FaceConfig
 from typing import Any, Dict, List
 
-
+#setup Gpt4 
+gpt4_api.setup_gpt4()
 
 cred = credentials.Certificate("howdinn-firebase-adminsdk-bzquq-90df7b7751.json")
 firebase_admin.initialize_app(cred, {
@@ -43,55 +44,51 @@ t = 0
 gpt4_api.setup_gpt4()
 @app.route("/", methods = ['GET', 'POST'])
 def index():
-
     interaction = False
-    if ( "user" not in session ):
-        redirect(url_for('login'))
+    if (session.get("user") is None ):
+        return redirect(url_for("login"))
     entry =gpt4_api.get_entry_question()  
-    return render_template('index.html', entry = entry)
+    return render_template('index.html', entry = entry,email=session.get("user"))
 
 @app.route("/signup",  methods=['GET','POST'])
 def signup():
     if ( request.method == "POST" ):
-        print("post")
         email=request.form['email']   #get the email from json
         password=request.form['password'] #get the password from json
+        print(request.form)
         try:
             useref.document().set(request.form)
-            return jsonify({'message': f'Successfully created user and send verification link please activate your account '}),200
+            return redirect(url_for("login"))
         except Exception as e:
             print(e.args)
             return "error"
-    return render_template("form.html",signup={True})
+    return render_template("form.html",signup=True)
 
 
 @app.route("/login",methods=['GET','POST'])
 def login():
-    if ( "user" in session ):
-       redirect(url_for("/"))
     if ( request.method == "POST" ):
-        print("post")
-        email=request.form['gemail']   #get the email from json
+        email=request.form['email']   #get the email from json
         password=request.form['password'] #get the password from json
         try:
             user = auth.sign_in_with_email_and_password(email,password)
             session["user"] = email
+            return redirect(url_for("index"))           
         except Exception as e:
             print(e.args)
             return "failed to login"
-    return render_template("login.html",signup={False}) 
+    if ( "user" in session ):
+       return redirect(url_for("index"))
+    return render_template("form.html",signup=False) 
 
 @app.route("/start_interaction", methods=['GET', 'POST'])
 def start_interaction():
-    print(request.method)
-    if request.method == 'POST':
-        if request.form.get('Start Recording') == 'Start Recording':
-            session["interacting"] = True
+    session["interacting"] = True
     if session["interacting"] == True:
         # instruction
         out = cv2.VideoWriter('output.avi', fourcc, 30, (640,  480))
 
-        def gen_frames():
+        def gen_frames():     
             t_end = time.time() + 5
             while time.time() < t_end:
                 ret, frame = camera.read()
@@ -102,7 +99,8 @@ def start_interaction():
                 # write the flipped frame
                 out.write(frame)
                 #cv2.imshow('frame', frame)
-            out.release()
+
+
         
         async def main():
             client = HumeStreamClient("3yfgKQI2BO49t8Mr8oSg2qnv0QPTAvdH1xBBluugSk5JeWdG")
@@ -112,7 +110,7 @@ def start_interaction():
                 result = await socket.send_file("output.avi")
                 #print(result)
                 n = 0
-                while n < 10:
+                while n < 1:
                     emotions = result["face"]["predictions"][n]["emotions"]
                     print_emotions(emotions)
                     n += 1
@@ -125,10 +123,9 @@ def start_interaction():
                 #print(f"- {emotion}: {final_emotion[emotion]:4f}")
 
         while True:
-                global t
                 asyncio.run(main())
+                global t
                 t += 1
-                print(t)
         
 final_list = []
 @app.route("/end_interaction", methods=['GET', 'POST'])
@@ -149,10 +146,11 @@ def end_interaction():
                 camera.release()
                 cv2.destroyAllWindows()
         session["interacting"] = False
-        redirect(url_for("results"))
         with open("chart_data(example).json", "w") as outfile:
-            outfile.write(json.dumps(final_list))
-        return json.dumps(final_list)
+            outfile.write(json.dumps(final_list))  
+        return redirect(url_for("results"))
+        
+        
     
 
 
@@ -169,7 +167,13 @@ def end_interaction():
 
 @app.route("/results")
 def results():
-    return "nothing"
+    chart_data = gpt4_api.read_json("chart_data.json")
+    emotion_factors = gpt4_api.flatten_json(chart_data)
+    advice_query = f"Give user a emotion analysis and advice within 5 sentences using these emotional factors that user felt : {emotion_factors} within 5 sentences"
+    rec_query = f"Give user a recommendation about 2 Movie, 2 food, and 1 acitvity using these emotional factors that user felt : {emotion_factors} within 5 sentences"
+    advice = gpt4_api.generate_answer(advice_query)
+    rec = gpt4_api.generate_answer(rec_query)
+    return render_template("result.html", chart_data = chart_data, advice = advice, rec = rec)
 # #get recommendations based on the final score
 # #General advice through open ai api and getting in movie recommendation etc.
 

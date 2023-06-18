@@ -56,4 +56,3 @@ def generate_answer(query):
 
 
 
-
