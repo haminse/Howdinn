@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect,jsonify
 from flask_cors import CORS
 import gpt4_api
+import firebase
 import firebase_admin
-from firebase_admin import credentials,firestore, auth
+from firebase_admin import credentials,firestore
 from dotenv import load_dotenv
 import os
 import json
@@ -18,7 +19,7 @@ firebase_admin.initialize_app(cred, {
 pb = pyrebase.initialize_app(json.load(open(("fbConfig.json"))))
 db = firestore.client()
 useref = db.collection("users")
-
+auth = firebase.auth()
 app = Flask(__name__)
 CORS(app)
 
@@ -37,13 +38,15 @@ def index():
 @app.route("/signup",  methods=['GET','POST'])
 def signup():
     email=request.json['email']   #get the email from json
-    password=request.json['password'] #get the password from json
+    password=request.json['password']
+    name = request.json['name'] #get the password from json
     if email is None or password is None:
        return jsonify({'message':'username and password must not in blank'}),400
     try:
         user = auth.create_user(
                email=email,
-               password=password
+               password=password,
+               name=name
         )
         user = pb.auth().sign_in_with_email_and_password(email, password)
         #pb.auth().send_email_verification(user['idToken']) 
