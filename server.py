@@ -1,16 +1,26 @@
-from flask import Flask, render_template, request, redirect,jsonify,session
+from flask import Flask, render_template, request, redirect,jsonify,session,url_for
 from flask_cors import CORS
 import gpt4_api
 from firebase import firebase
 import firebase_admin
 from firebase_admin import credentials,firestore
-from dotenv import load_dotenv
+
 import os
 import json
 import pyrebase
-load_dotenv()
 
-cred = credentials.Certificate(os.getenv("CREDENTIALS_LOCATION"))
+import asyncio
+import cv2
+import numpy as np
+import time
+from hume import HumeStreamClient, StreamSocket
+from hume.models.config import FaceConfig
+from typing import Any, Dict, List
+
+
+
+
+cred = credentials.Certificate("howdinn-firebase-adminsdk-bzquq-90df7b7751.json")
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://howdinn.firebaseio.com' 
 })
@@ -21,14 +31,98 @@ auth = pb.auth()
 
 
 app = Flask(__name__)
+app.secret_key = "abc123"
 CORS(app)
 
+final_emotion = {"Sympathy" : 0, "Surprise (positive)" : 0, "Sadness" : 0, "Romance" : 0, "Pride" : 0, "Pain" : 0, "Nostalgia" : 0, "Love" : 0, "Joy" : 0, "Horror" : 0, "Fear" : 0, "Excitement" : 0, "Doubt" : 0, "Disgust" : 0, "Determination" : 0, "Contentment" : 0, "Confusion" : 0, "Boredom" : 0, "Awe" : 0, "Anger" : 0, "Amusement" : 0, "Adoration" : 0}
+final_statement = ""
 
 
 gpt4_api.setup_gpt4()
 @app.route("/", methods = ['GET', 'POST'])
 def index():
+    if ( "user" not in session ):
+        redirect(url_for('login'))
     entry =gpt4_api.get_entry_question()
+    session["interacting"] = True
+    if session["interacting"] == True:
+        # instructions
+        camera = cv2.VideoCapture(0)
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        out = cv2.VideoWriter('output.avi', fourcc, 30, (640,  480))
+
+        def gen_frames():
+            t_end = time.time() + 5
+            while time.time() < t_end:
+                ret, frame = camera.read()
+                if not ret:
+                    print("Can't receive frame (stream end?). Exiting ...")
+                    break
+                #frame = cv2.flip(frame, 0)
+                # write the flipped frame
+                out.write(frame)
+                #cv2.imshow('frame', frame)
+            out.release()
+
+        
+        async def main():
+            client = HumeStreamClient("3yfgKQI2BO49t8Mr8oSg2qnv0QPTAvdH1xBBluugSk5JeWdG")
+            config = FaceConfig(identify_faces=True)
+            gen_frames()
+            async with client.connect([config]) as socket:
+                result = await socket.send_file("output.avi")
+                #print(result)
+                n = 0
+                while n < 14:
+                    emotions = result["face"]["predictions"][n]["emotions"]
+                    print_emotions(emotions)
+                    n += 1
+            
+
+        def print_emotions(emotions: List[Dict[str, Any]]) -> None:
+            emotion_map = {e["name"]: e["score"] for e in emotions}
+            for emotion in ["Sympathy", "Surprise (positive)", "Sadness", "Romance", "Pride", "Pain", "Nostalgia", "Love", "Joy", "Horror", "Fear", "Excitement", "Doubt", "Disgust", "Determination", "Contentment", "Confusion", "Boredom", "Awe", "Anger", "Amusement", "Adoration"]:
+                final_emotion[emotion] += emotion_map[emotion]
+                #print(f"- {emotion}: {final_emotion[emotion]:4f}")
+        n = 0
+        t_end1 = time.time() + 10
+        while True:
+                asyncio.run(main())
+                n += 1
+                if time.time() >= t_end1:
+                    camera.release()
+                    out.release()
+                    cv2.destroyAllWindows()
+                    break
+        if n > 0:
+            final_emotion_sorted = dict(sorted(final_emotion.items(), key=lambda x:x[1], reverse=True))
+            no = 0
+            final_list = []
+            for emotion in final_emotion_sorted.keys():
+                if no < 5: 
+                    final_list.append({"emotion" : emotion, 
+                                       "percentage" : int(final_emotion_sorted[emotion] /(n*14)*100)})
+                    no += 1
+            print(final_list)
+
+
+        
+    elif session["therapry"] == "done":
+        if n > 0:
+            final_emotion_sorted = dict(sorted(final_emotion.items(), key=lambda x:x[1], reverse=True))
+            no = 0
+            final_list = []
+            for emotion in final_emotion_sorted.keys():
+                if no < 5: 
+                    final_list.append({"emotion" : emotion, 
+                                       "percentage" : int(final_emotion_sorted[emotion] /(n*14)*100)})
+                    no += 1
+            print(final_list)
+            camera.release()
+            out.release()
+            cv2.destroyAllWindows()
+        redirect(url_for("results"))
+
     return render_template('index.html', entry = entry)
 
 
@@ -41,27 +135,30 @@ def signup():
         print("post")
         email=request.form['email']   #get the email from json
         password=request.form['password'] #get the password from json
-        if email is None or password is None:
-            return "error1"
         try:
             useref.document().set(request.form)
-            # user = auth.create_user_with_email_and_password(
-            #     email=email,
-            #     password=password
-            # )
-            # session["user"] = email
             return jsonify({'message': f'Successfully created user and send verification link please activate your account '}),200
         except Exception as e:
             print(e.args)
             return "error"
-    return render_template("form.html",signup={True})
+    return render_template("signup.html",signup={True})
 
 
-
-@app.route("/result", methods = ['GET', 'POST']) #change th the only POST later
-def result():
-    return render_template("result.html")
-
+@app.route("/login",methods=['GET','POST'])
+def login():
+    if ( "user" in session ):
+       redirect(url_for("/"))
+    if ( request.method == "POST" ):
+        print("post")
+        email=request.form['email']   #get the email from json
+        password=request.form['password'] #get the password from json
+        try:
+            user = auth.sign_in_with_email_and_password(email,password)
+            session["user"] = email
+        except Exception as e:
+            print(e.args)
+            return "failed to login"
+    return render_template("login.html",signup={False}) 
 
 
 # @app.route("/therapy")
@@ -74,14 +171,16 @@ def result():
 # # Outputs
 
 
-# @app.route("/recommendations")
+@app.route("/results")
+def results():
+    return "nothing"
 # #get recommendations based on the final score
 # #General advice through open ai api and getting in movie recommendation etc.
 
 
 
 # to debug in local
-app.run(debug = True, port = 5004)
+app.run(debug = True, port = 5004, threaded=True)
 
 # to deploy
 # if __name__ == "__main__":
