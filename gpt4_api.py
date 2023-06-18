@@ -2,9 +2,14 @@
 import openai
 import json
 import random
+
 #setup
-KEY = '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'
-openai.api_key = KEY
+def setup_gpt4():
+    try:
+        KEY = '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'
+        openai.api_key = KEY
+    except Exception as e:
+        raise Exception("OPEN_ AI API KEY Error occured!!!", str(e))
 
 #read json file
 def read_json(file_name):
