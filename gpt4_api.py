@@ -2,12 +2,12 @@
 import openai
 import json
 import random
+from openai_key import OPEN_AI_KEY
 
 #setup
 def setup_gpt4():
     try:
-        KEY = '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'
-        openai.api_key = KEY
+        openai.api_key = OPEN_AI_KEY
     except Exception as e:
         raise Exception("OPEN_ AI API KEY Error occured!!!", str(e))
 
