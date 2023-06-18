@@ -23,9 +23,9 @@ auth = pb.auth()
 app = Flask(__name__)
 CORS(app)
 
-
-
+#set up GPT
 gpt4_api.setup_gpt4()
+
 @app.route("/", methods = ['GET', 'POST'])
 def index():
     entry =gpt4_api.get_entry_question()
@@ -65,7 +65,12 @@ def login():
 def result():
     #humm code here  : return json file
     chart_data = gpt4_api.read_json("chart_data(example).json")
-    return render_template("result.html", chart_data = chart_data)
+    emotion_factors = gpt4_api.flatten_json(chart_data)
+    advice_query = f"Give user a emotion analysis and advice within 5 sentences using these emotional factors that user felt : {emotion_factors} within 5 sentences"
+    rec_query = f"Give user a recommendation about 2 Movie, 2 food, and 1 acitvity using these emotional factors that user felt : {emotion_factors} within 5 sentences"
+    advice = gpt4_api.generate_answer(advice_query)
+    rec = gpt4_api.generate_answer(rec_query)
+    return render_template("result.html", chart_data = chart_data, advice = advice, rec = rec)
 
 
 

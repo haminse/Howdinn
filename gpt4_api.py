@@ -6,7 +6,7 @@ import random
 #setup
 def setup_gpt4():
     try:
-        KEY = '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'
+        KEY = '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'
         openai.api_key = KEY
     except Exception as e:
         raise Exception("OPEN_ AI API KEY Error occured!!!", str(e))
@@ -54,7 +54,6 @@ def generate_answer(query):
 # a = generate_answer(f"Give user a emotion analysis and advice within 5 sentences using these emotional factors that user felt : {emotion_factors}")
 # print("General advice : ", a)
 
-# Movie recommendation
 
 
 
