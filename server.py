@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect,jsonify
+from flask import Flask, render_template, request, redirect,jsonify,session
 from flask_cors import CORS
 import gpt4_api
+from firebase import firebase
 import firebase_admin
-from firebase_admin import credentials,firestore, auth
+from firebase_admin import credentials,firestore
 from dotenv import load_dotenv
 import os
 import json
@@ -16,6 +17,8 @@ firebase_admin.initialize_app(cred, {
 pb = pyrebase.initialize_app(json.load(open(("fbConfig.json"))))
 db = firestore.client()
 useref = db.collection("users")
+auth = pb.auth()
+
 
 app = Flask(__name__)
 CORS(app)
@@ -34,25 +37,25 @@ def index():
 
 @app.route("/signup",  methods=['GET','POST'])
 def signup():
-    email=request.json['email']   #get the email from json
-    password=request.json['password'] #get the password from json
-    if email is None or password is None:
-       return jsonify({'message':'username and password must not in blank'}),400
-    try:
-        user = auth.create_user(
-               email=email,
-               password=password
-        )
-        user = pb.auth().sign_in_with_email_and_password(email, password)
-        #pb.auth().send_email_verification(user['idToken']) 
-        return jsonify({'message': f'Successfully created user and send verification link please activate your account '}),200
-    except:
-        if email:
-            emailexists=auth.get_user_by_email(email)
-            if(emailexists.uid):
-                return jsonify({'message': 'user is already exists '}),400
-        else:
-            return jsonify({'message': 'error creating in user'}),400
+    if ( request.method == "POST" ):
+        print("post")
+        email=request.form['email']   #get the email from json
+        password=request.form['password'] #get the password from json
+        if email is None or password is None:
+            return "error1"
+        try:
+            useref.document().set(request.form)
+            # user = auth.create_user_with_email_and_password(
+            #     email=email,
+            #     password=password
+            # )
+            # session["user"] = email
+            return jsonify({'message': f'Successfully created user and send verification link please activate your account '}),200
+        except Exception as e:
+            print(e.args)
+            return "error"
+    return render_template("signup.html",signup={True})
+
 
 
 @app.route("/result", methods = ['GET', 'POST']) #change th the only POST later
