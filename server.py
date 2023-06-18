@@ -54,9 +54,12 @@ def signup():
         except Exception as e:
             print(e.args)
             return "error"
-    return render_template("form.html",signup={True})
+    return render_template("form.html",signup=True)
 
-
+@app.route("/login",  methods=['GET'])
+def login():
+    return render_template("form.html",signup=False)
+    
 
 @app.route("/result", methods = ['GET', 'POST']) #change th the only POST later
 def result():

@@ -4,14 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='form.css') }}">
-    <title>Document</title>
+    <title>First Step to get to know you!</title>
 </head>
 <body>
     <h1><div id = "logo_box"><img src = "{{ url_for('static', filename='images/logo.png') }}" width = "300px"></div></h1>
     <div class="form-box">
+        {% if signup %}
         <form class="form" method="post" action="{{ url_for('signup') }}">
             <span class="title">Sign up</span>
             <span class="subtitle">Create a free account with your email.</span>
+        {% else %}
+        <form class="form" method="post" action="{{ url_for('index') }}">
+            <span class="title">Log in</span>
+            <span class="subtitle">Login with your email.</span>
+        {% endif %}
             <div class="form-container">
                     <input type="email" name="email" class="input" placeholder="Email">
                     <input type="password" name="password" class="input" placeholder="Password">
@@ -19,7 +25,11 @@
             <input id = "button" type="submit" value="Submit">
         </form>
         <div class="form-section">
-          <p>Have an account? <a href="/form">Log in</a> </p>
+        {%if signup%}
+            <p>Have an account? <a href="/login">Log in</a> </p>
+        {% else %}
+            <p>Have no account? <a href="/signup">Sign up</a> </p>
+        {% endif %}
         </div>
         </div>
 </body>

@@ -6,7 +6,7 @@ import random
 #setup
 def setup_gpt4():
     try:
-        KEY = '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'
+        KEY = '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'
         openai.api_key = KEY
     except Exception as e:
         raise Exception("OPEN_ AI API KEY Error occured!!!", str(e))
@@ -14,7 +14,13 @@ def setup_gpt4():
 #read json file
 def read_json(file_name):
     with open(file_name) as file:
-        return json.load(file)
+        return json.load(file)    
+
+#flatten the emotion json
+def flatten_json(data):
+    flattened = '\n'.join([f"{item['emotion']}: {item['percentage']}%" for item in data])
+    return flattened
+
 
 #get entry question
 def get_entry_question():
@@ -35,15 +41,18 @@ def generate_answer(query):
     return answer
 
 
+
 # Examples
 
 
 
-# general advice
-setup_gpt4()
-input_from_humm = read_json('emotion.json')['emotions']
-a = generate_answer(f"Give user a emotion analysis and advice within 5 sentences using these emotional factors she felt : {input_from_humm}")
-print("General advice : ", a)
+# general advice example
+# setup_gpt4()
+# input_from_humm = read_json('chart_data(example).json')
+# print(input_from_humm)
+# emotion_factors = flatten_json(input_from_humm)
+# a = generate_answer(f"Give user a emotion analysis and advice within 5 sentences using these emotional factors that user felt : {emotion_factors}")
+# print("General advice : ", a)
 
 # Movie recommendation
 
