@@ -1,12 +1,78 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect,jsonify
+from flask_cors import CORS
 import gpt4_api
+import firebase_admin
+from firebase_admin import credentials,firestore, auth
+from dotenv import load_dotenv
+import os
+import json
+import pyrebase
+
+load_dotenv()
+
+
+cred = credentials.Certificate(os.getenv("CREDENTIALS_LOCATION"))
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://howdinn.firebaseio.com' 
+})
+pb = pyrebase.initialize_app(json.load(open(("fbConfig.json"))))
+db = firestore.client()
+useref = db.collection("users")
 
 app = Flask(__name__)
+CORS(app)
+
+
+
 gpt4_api.setup_gpt4()
 @app.route("/", methods = ['GET', 'POST'])
 def index():
     entry =gpt4_api.get_entry_question()
     return render_template('index.html', entry = entry)
+
+
+# @app.route("/login")
+# #compare data to firebase and serve pages accordingly
+
+@app.route("/signup",  methods=['GET','POST'])
+def signup():
+    email=request.json['email']   #get the email from json
+    password=request.json['password'] #get the password from json
+    if email is None or password is None:
+       return jsonify({'message':'username and password must not in blank'}),400
+    try:
+        user = auth.create_user(
+               email=email,
+               password=password
+        )
+        user = pb.auth().sign_in_with_email_and_password(email, password)
+        #pb.auth().send_email_verification(user['idToken']) 
+        return jsonify({'message': f'Successfully created user and send verification link please activate your account '}),200
+    except:
+        if email:
+            emailexists=auth.get_user_by_email(email)
+            if(emailexists.uid):
+                return jsonify({'message': 'user is already exists '}),400
+        else:
+            return jsonify({'message': 'error creating in user'}),400
+
+
+
+
+# @app.route("/therapy")
+# # record video and send data to firebase // hume api 
+
+
+# @app.route("/fetchScore")
+# #???
+
+# # Outputs
+
+
+# @app.route("/recommendations")
+# #get recommendations based on the final score
+# #General advice through open ai api and getting in movie recommendation etc.
+
 
 
 # to debug in local
