@@ -7,9 +7,7 @@ from dotenv import load_dotenv
 import os
 import json
 import pyrebase
-
 load_dotenv()
-
 
 cred = credentials.Certificate(os.getenv("CREDENTIALS_LOCATION"))
 firebase_admin.initialize_app(cred, {
@@ -56,6 +54,10 @@ def signup():
         else:
             return jsonify({'message': 'error creating in user'}),400
 
+
+@app.route("/result", methods = ['GET', 'POST']) #change th the only POST later
+def result():
+    return render_template("result.html")
 
 
 

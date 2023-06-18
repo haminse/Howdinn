@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+
+html, body {
+    height: 100%;
+}
+
+body{
+    color : #222222;
+    /* background-color: #222222; */
+    background-image: url('images/bg_main.jpg');
+    font-family: 'Lobster', cursive;
+    /* background-image: linear-gradient(to top, #fdcbf1 0%, #fdcbf1 1%, #e6dee9 100%); */
+    background-size: cover;
+    background-repeat: no-repeat;
+    /* background-size: 100% auto; */
+}
+
+h1{
+    margin-bottom: 10%;
+}
