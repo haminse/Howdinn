@@ -151,7 +151,7 @@ def end_interaction():
         session["interacting"] = False
         redirect(url_for("results"))
         with open("chart_data(example).json", "w") as outfile:
-        outfile.write(json.dumps(final_list))
+            outfile.write(json.dumps(final_list))
         return json.dumps(final_list)
     
 
