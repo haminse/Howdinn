@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='signup.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='form.css') }}">
     <title>Document</title>
 </head>
-<h1>Howdinn</h1>
 <body>
+    <h1><div id = "logo_box"><img src = "{{ url_for('static', filename='images/logo.png') }}" width = "300px"></div></h1>
     <div class="form-box">
         <form class="form" method="post" action="{{ url_for('signup') }}">
             <span class="title">Sign up</span>
@@ -16,10 +16,10 @@
                     <input type="email" name="email" class="input" placeholder="Email">
                     <input type="password" name="password" class="input" placeholder="Password">
             </div>
-            <input type="submit" value="Submit">
+            <input id = "button" type="submit" value="Submit">
         </form>
         <div class="form-section">
-          <p>Have an account? <a href="">Log in</a> </p>
+          <p>Have an account? <a href="/form">Log in</a> </p>
         </div>
         </div>
 </body>

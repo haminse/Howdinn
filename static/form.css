@@ -1,20 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+
 html, body {
     height: 100%;
 }
+
+
+
 body{
     display: grid;
     place-items: center;
-    min-height: 100vh;
+    /* min-height: 100vh; */
     font-family: 'Lobster', cursive; 
-    /* background-image: url('static/images/bg_main.jpg'); */
-    /* background-size: cover; */
-    /* background-repeat: no-repeat; */
+    background-image: url('images/bg_main.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: 'Lobster', cursive;
 
 }
-h1{
-    margin-left: 5%;
-}
 .form-box {
+margin-top: -20%;    
+
 max-width: 300px;
 background: #f1f7fe;
 overflow: hidden;
@@ -81,7 +86,7 @@ text-decoration: underline;
 }
 
 /*Button*/
-.form button {
+.form #button {
 background-color: #0066ff;
 color: #fff;
 border: 0;
@@ -93,6 +98,6 @@ cursor: pointer;
 transition: background-color .3s ease;
 }
 
-.form button:hover {
+.form #button:hover {
 background-color: #005ce6;
 }

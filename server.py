@@ -54,7 +54,7 @@ def signup():
         except Exception as e:
             print(e.args)
             return "error"
-    return render_template("signup.html",signup={True})
+    return render_template("form.html",signup={True})
 
 
 

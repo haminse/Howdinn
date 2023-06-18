@@ -6,17 +6,14 @@ html, body {
 
 body{
     color : #222222;
-    /* background-color: #222222; */
     background-image: url('images/bg_main.jpg');
     font-family: 'Lobster', cursive;
-    /* background-image: linear-gradient(to top, #fdcbf1 0%, #fdcbf1 1%, #e6dee9 100%); */
     background-size: cover;
     background-repeat: no-repeat;
-    /* background-size: 100% auto; */
 }
 
 h1{
-    margin-bottom: 10%;
+    margin-bottom: 3%;
 }
 
 
@@ -48,7 +45,7 @@ h1{
     width : 120px;
     height : 40px;
     position: absolute;
-    top: 5%;
+    top: 7%;
     right: 2%;
 
     /* padding-left : 2%;
