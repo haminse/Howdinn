@@ -2,19 +2,25 @@
 import openai
 import json
 import random
+from openai_key import OPEN_AI_KEY
 
 #setup
 def setup_gpt4():
     try:
-        KEY = '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'
-        openai.api_key = KEY
+        openai.api_key = OPEN_AI_KEY
     except Exception as e:
         raise Exception("OPEN_ AI API KEY Error occured!!!", str(e))
 
 #read json file
 def read_json(file_name):
     with open(file_name) as file:
-        return json.load(file)
+        return json.load(file)    
+
+#flatten the emotion json
+def flatten_json(data):
+    flattened = '\n'.join([f"{item['emotion']}: {item['percentage']}%" for item in data])
+    return flattened
+
 
 #get entry question
 def get_entry_question():
@@ -35,16 +41,19 @@ def generate_answer(query):
     return answer
 
 
+
 # Examples
 
 
 
-# general advice
-# input_from_humm = read_json('emotion.json')['emotions']
-# a = generate_answer(f"Give user a emotion analysis and advice within 5 sentences using these emotional factors she felt : {input_from_humm}")
+# general advice example
+# setup_gpt4()
+# input_from_humm = read_json('chart_data(example).json')
+# print(input_from_humm)
+# emotion_factors = flatten_json(input_from_humm)
+# a = generate_answer(f"Give user a emotion analysis and advice within 5 sentences using these emotional factors that user felt : {emotion_factors}")
 # print("General advice : ", a)
 
-# Movie recommendation
 
 
 

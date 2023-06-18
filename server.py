@@ -34,11 +34,16 @@ app = Flask(__name__)
 app.secret_key = "abc123"
 CORS(app)
 
+
 final_emotion = {"Sympathy" : 0, "Surprise (positive)" : 0, "Sadness" : 0, "Romance" : 0, "Pride" : 0, "Pain" : 0, "Nostalgia" : 0, "Love" : 0, "Joy" : 0, "Horror" : 0, "Fear" : 0, "Excitement" : 0, "Doubt" : 0, "Disgust" : 0, "Determination" : 0, "Contentment" : 0, "Confusion" : 0, "Boredom" : 0, "Awe" : 0, "Anger" : 0, "Amusement" : 0, "Adoration" : 0}
 final_statement = ""
 
 
+
+#set up GPT
+
 gpt4_api.setup_gpt4()
+
 @app.route("/", methods = ['GET', 'POST'])
 def index():
     if ( "user" not in session ):
@@ -141,7 +146,25 @@ def signup():
         except Exception as e:
             print(e.args)
             return "error"
-    return render_template("signup.html",signup={True})
+
+
+    return render_template("form.html",signup=True)
+
+@app.route("/login",  methods=['GET'])
+def login():
+    return render_template("form.html",signup=False)
+    
+
+@app.route("/result", methods = ['GET', 'POST']) #change th the only POST later
+def result():
+    #humm code here  : return json file
+    chart_data = gpt4_api.read_json("chart_data(example).json")
+    emotion_factors = gpt4_api.flatten_json(chart_data)
+    advice_query = f"Give user a emotion analysis and advice within 5 sentences using these emotional factors that user felt : {emotion_factors} within 5 sentences"
+    rec_query = f"Give user a recommendation about 2 Movie, 2 food, and 1 acitvity using these emotional factors that user felt : {emotion_factors} within 5 sentences"
+    advice = gpt4_api.generate_answer(advice_query)
+    rec = gpt4_api.generate_answer(rec_query)
+    return render_template("result.html", chart_data = chart_data, advice = advice, rec = rec)
 
 
 @app.route("/login",methods=['GET','POST'])
