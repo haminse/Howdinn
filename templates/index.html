@@ -8,6 +8,7 @@
     <title>Audio Diary</title>
 </head>
 <body>
+
     <h1><img src = "{{ url_for('static', filename='images/logo.png') }}" width = "250px"></h1> 
     <div id = "account_box"> Vats
     </div>
@@ -20,10 +21,18 @@
                 <div class="keyboard"></div>
             </div>
         </div>
-        <div id = "button_box">
-            <button id = "start_button" onclick="changeButton()">
-                Start Recording My Day 
-            </button>
+
+            <form method="post" action="/start_interaction">
+
+                <input type="submit" value="Start Recording" name="Start Recording"/>
+
+            </form>
+            <form method="post" action="/end_interaction">
+
+                <input type="submit" value="Stop Recording" name="Stop Recording"/>
+
+            </form>
+
         </div>
     </div>
 </body>
