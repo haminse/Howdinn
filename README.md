@@ -1,5 +1,5 @@
 # Howdinn
-
+Video Diary App with AI Advisor 
 
 ## Brain storming page
 ---
@@ -13,3 +13,8 @@ https://www.figma.com/file/OTwb76mSu0c5K3fGEFqCoj/Untitled?type=design&node-id=1
 ## DevPost
 ---
 https://www.google.com/search?q=move+to+url+in+mac+shortcut&oq=move+to+url+in+mac+shortcut&aqs=chrome..69i57j33i160i395j33i22i29i30i395.11006j1j7&sourceid=chrome&ie=UTF-8
+
+## PPT
+---
+https://drive.google.com/file/d/11510fH56YOJJbntdeQeGr_Dgc75YrsYS/view?usp=sharing
+
