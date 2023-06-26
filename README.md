@@ -1,5 +1,8 @@
 # Howdinn
 Video Diary App with AI Advisor 
+<img width="8548" alt="howdinn" src="https://github.com/haminse/Howdinn/assets/68217111/cb8a92f1-3299-48bc-9025-717f951d5d32">
+
+
 
 ## Brain storming page
 ---
